@@ -1,0 +1,1 @@
+configure -platform win32-g++ -opengl es2 -xplatform android-g++ -nomake tests -nomake examples -android-ndk "C:\Android\android-ndk-r17c" -android-sdk "C:\Android_SDK" -android-ndk-host windows-x86_64 -android-toolchain-version 4.9 -prefix "C:\Qt\qt-512.1-Android-mingw810-seh-rev0.7" -skip qttranslations -skip qtserialport -no-warnings-are-errors -skip qtwebengine
