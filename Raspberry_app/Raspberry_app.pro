@@ -42,7 +42,7 @@ MOBILITY =
 
 #INCLUDEPATH += /home/yannk/Bureau/raspi/sysroot/usr/local/include
 #LIBS += -L"/home/yannk/Bureau/raspi/opencv4/lib" -lopencv_core
-#LIBS += -L"/usr/local/lib" -lraspicam
+LIBS += -L"/usr/local/lib" -lraspicam
 INCLUDEPATH += "/usr/local/include"
 #LIBS += -L"/home/yannk/Bureau/raspi/sysroot/usr/lib/arm-linux-gnueabihf/" -lopencv_core
 

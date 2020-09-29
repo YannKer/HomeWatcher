@@ -19,7 +19,7 @@ UDP_Worker::UDP_Worker(QObject *parent)
            this, &UDP_Worker::readPendingDatagrams);
 
 
-   //m_Camera = new raspicam::RaspiCam();
+   m_Camera = new raspicam::RaspiCam();
 
 
 }
@@ -38,7 +38,7 @@ void UDP_Worker::readPendingDatagrams()
 
 void UDP_Worker::process()
 {
-    /*if(!m_Camera->isOpened())
+    if(!m_Camera->isOpened())
     {
         //Open camera
         qDebug() <<"Opening Camera";
@@ -50,20 +50,28 @@ void UDP_Worker::process()
 
     }
 
+    uint imgSize = m_Camera->getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB );
     //capture
     m_Camera->grab();
 
     //extract the image in rgb format
-    m_Camera->retrieve ( m_data,raspicam::RASPICAM_FORMAT_RGB );//get camera image
-    m_img.loadFromData(m_data,m_Camera->getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB ));
-    emit newImage(m_img);*/
+    m_Camera->retrieve ( m_data );//get camera image
+    auto format = m_Camera->getFormat();
+    uint width = m_Camera->getWidth();
+    uint height = m_Camera->getHeight();
+
+    m_image = QImage(m_data,width,height,QImage::Format_RGB888);
+
+    bool convertFromImage = m_pixmap.convertFromImage(m_image);
+
+    emit newImage(m_pixmap);
 }
 
 void UDP_Worker::processTheDatagram(QNetworkDatagram datagram)
 {
     qDebug() << __PRETTY_FUNCTION__;
     qDebug() << datagram.data();
-    if( datagram.data()== QByteArray("INIT_CONNECTION"))
+    if( datagram.data() == QByteArray("INIT_CONNECTION"))
     {
         m_UdpSocket->connectToHost(datagram.senderAddress(), datagram.senderPort(),QIODevice::ReadWrite);
         emit connected();

@@ -54,7 +54,7 @@ UDP_Server::UDP_Server()
     QObject::connect(m_worker, SIGNAL (disconnected()), m_timer, SLOT (stop()));
     QObject::connect(m_worker, SIGNAL (newImage(QPixmap)), this, SIGNAL (newImage(QPixmap)));
     thread->start();
-    m_timer->setInterval(500);
+    m_timer->setInterval(50);
 }
 
 void UDP_Server::sendMessage(QString msg)

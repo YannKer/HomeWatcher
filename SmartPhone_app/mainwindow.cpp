@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_network = new Network();
     QWidget * centralWidget = new QWidget(this);
     QFormLayout * flayout = new QFormLayout(centralWidget);
-    QLineEdit * LE_msg = new QLineEdit(centralWidget);
+    QLineEdit * LE_msg = new QLineEdit("INIT_CONNECTION",centralWidget);
     QPushButton * PB_sendMsh = new QPushButton("OK",centralWidget);
     QHBoxLayout * HBlayout_sendMsg = new QHBoxLayout();
     HBlayout_sendMsg->addWidget(LE_msg);
