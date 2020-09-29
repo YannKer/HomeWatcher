@@ -1,1 +1,61 @@
-"../configure" -platform win32-g++ -opengl es2 -xplatform android-g++ -nomake tests -nomake examples -android-ndk "C:\Android\Android_NDK\r11c" -android-sdk "C:\Android_SDK" -android-ndk-host windows-x86_64 -android-toolchain-version 4.9 -prefix "C:\Qt\Qt-5.12.1-Android" -skip qttranslations -skip qtserialport -skip qtwebengine -skip qtvirtualkeyboard -skip qtwebview -skip qtwebglplugin -skip qtwayland -skip qtsvg -skip qtspeech -skip qtpurchasing -skip qtmacextras -skip qtcharts  -no-warnings-are-errors
+export RPI_TOOLCHAIN=~/Bureau/crosscompile-tools/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf-
+
+../qt-everywhere-src-5.12.6/configure -opengl es2 -platform linux-g++-64 -device linux-rasp-pi3-g++ -device-option CROSS_COMPILE=$RPI_TOOLCHAIN -opensource -confirm-license -optimized-qmake -reduce-exports -release -make libs -prefix /usr/local/qt5pi 
+
+../qt-everywhere-src-5.12.6/configure -platform linux-g++-64 -device linux-rasp-pi3-g++ -opengl es2 -opensource -confirm-license -release -nomake tests -nomake examples  -developer-build -prefix /usr/local/qt5pi 
+
+
+../qt-everywhere-src-5.12.6/configure -v -opengl es2 -eglfs -no-gtk -device linux-rasp-pi3-g++ -device-option CROSS_COMPILE=/usr/bin/ -opensource -confirm-license -release -reduce-exports -force-pkg-config -no-kms -nomake examples -no-compile-examples -no-pch -skip qtwayland -skip qtwebengine -no-feature-geoservices_mapboxgl -qt-pcre -ssl -evdev -system-freetype -fontconfig -glib -prefix /opt/Qt5.11
+
+../qt-everywhere-src-5.12.6/configure -platform linux-g++-64 -opengl es2 -device linux-rasp-pi3-g++ -device-option CROSS_COMPILE=~/Bureau/raspi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf- -sysroot ~/Bureau/raspi/sysroot -opensource -confirm-license -release -nomake tests -nomake examples -no-compile-examples -skip qtwayland -skip qtwebengine -skip qtlocation -skip qtscript -prefix /usr/local/qt5pi -extprefix /usr/local/rpi3/qt5pi -hostprefix /usr/local/rpi3/qt5 -no-use-gold-linker
+
+../qt-everywhere-src-5.12.6/configure -device linux-rasp-pi3-g++ -device-option CROSS_COMPILE=~/Bureau/raspi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf- -sysroot ~/Bureau/raspi/sysroot -opensource -confirm-license -release -nomake tests -nomake examples -no-compile-examples -skip qtwayland -skip qtwebengine -skip qtlocation -skip qtscript -prefix /usr/local/qt5pi -extprefix /usr/local/rpi3/qt5pi -hostprefix /usr/local/rpi3/qt5 -no-use-gold-linker
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#########################################################################
+# http://tvaira.free.fr/projets/activites/activite-qt5-rpi.html
+# need to 
+rsync -avz pi@192.168.0.31:/lib sysroot
+rsync -avz pi@192.168.0.31:/usr/include sysroot/usr
+rsync -avz pi@192.168.0.31:/usr/lib sysroot/usr
+rsync -avz pi@192.168.0.31:/opt/vc sysroot/opt
+./sysroot-relativelinks.py sysroot
+cd build
+../qt-everywhere-src-5.12.6/configure -opengl es2 -eglfs -device linux-rasp-pi3-g++ -device-option CROSS_COMPILE=~/Bureau/raspi/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf- -sysroot ~/Bureau/raspi/sysroot -opensource -confirm-license -release -nomake tests -nomake examples -no-compile-examples -skip qtwayland -skip qtwebengine -skip qtlocation -skip qtscript -prefix /usr/local/qt5pi -extprefix /usr/local/rpi3/qt5pi -hostprefix /usr/local/rpi3/qt5 -no-use-gold-linker
+make -j8
+sudo make install
+cd /usr/local/rpi3/
+sudo rsync -avz qt5pi pi@192.168.0.31:/usr/local
+
+#sur raspberry
+echo /usr/local/qt5pi/lib | sudo tee /etc/ld.so.conf.d/qt5pi.conf
+sudo ldconfig
+sudo mv /usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0 /usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0_backup
+sudo mv /usr/lib/arm-linux-gnueabihf/libGLESv2.so.2.1.0 /usr/lib/arm-linux-gnueabihf/libGLESv2.so.2.1.0_backup
+sudo ln -s /opt/vc/lib/libEGL.so /usr/lib/arm-linux-gnueabihf/libEGL.so.1.1.0
+sudo ln -s /opt/vc/lib/libGLESv2.so /usr/lib/arm-linux-gnueabihf/libGLESv2.so.2.1.0
+sudo ln -s /opt/vc/lib/libbrcmEGL.so /opt/vc/lib/libEGL.so
+sudo ln -s /opt/vc/lib/libbrcmGLESv2.so.2 /opt/vc/lib/libGLESv2.so
+sudo ln -s /opt/vc/lib/libEGL.so /opt/vc/lib/libEGL.so.1
+sudo ln -s /opt/vc/lib/libGLESv2.so /opt/vc/lib/libGLESv2.so.2
+export PATH=$PATH:/usr/local/qt5pi/bin
+export PATH=$PATH:/usr/local/qt5pi/plugins
