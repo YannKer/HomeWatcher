@@ -15,10 +15,8 @@ public:
 
 
 private:
-    QLabel m_labelImage;
 
-private slots:
-    void displayImg(QPixmap img);
+
 };
 
 #endif // MAINWINDOW_H

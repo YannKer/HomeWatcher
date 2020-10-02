@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT += core gui network
+QT += core gui network concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,14 +27,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11 console
 
 SOURCES += \
+        Camera/Camera.cpp \
         UDP_Server/UDP_Server.cpp \
-        UDP_Server/UDP_Worker.cpp \
         main.cpp \
         mainwindow.cpp
 
 HEADERS += \
+        Camera/Camera.h \
+        SharedQueue.h \
         UDP_Server/UDP_Server.h \
-        UDP_Server/UDP_Worker.h \
         mainwindow.h
 
 CONFIG += mobility

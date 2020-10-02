@@ -19,7 +19,7 @@ UDP_Worker::UDP_Worker(QObject *parent)
            this, &UDP_Worker::readPendingDatagrams);
 
 
-   m_Camera = new raspicam::RaspiCam();
+
 
 
 }
@@ -47,24 +47,40 @@ void UDP_Worker::process()
         qDebug()<<"Sleeping for 3 secs";
         QThread::msleep(3000);
         m_data=new unsigned char[  m_Camera->getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB )];
+        m_imgCpt = 0;
 
     }
 
-    uint imgSize = m_Camera->getImageTypeSize ( raspicam::RASPICAM_FORMAT_RGB );
     //capture
     m_Camera->grab();
 
     //extract the image in rgb format
     m_Camera->retrieve ( m_data );//get camera image
-    auto format = m_Camera->getFormat();
-    uint width = m_Camera->getWidth();
-    uint height = m_Camera->getHeight();
 
-    m_image = QImage(m_data,width,height,QImage::Format_RGB888);
+    uint16_t width = m_Camera->getWidth();
+    uint16_t height = m_Camera->getHeight();
 
-    bool convertFromImage = m_pixmap.convertFromImage(m_image);
 
-    emit newImage(m_pixmap);
+    QByteArray byteArrayImage;
+    QDataStream streamImage(&byteArrayImage, QIODevice::WriteOnly);
+    streamImage <<(uint8_t)0xFF;
+    streamImage <<(uint8_t)0x01;
+    streamImage << width;
+    streamImage << height;
+
+    m_UdpSocket->write(byteArrayImage);
+
+    int imgsize = width*height*3;
+    int nbpaket = imgsize/3000;
+    for(int i=0;i<nbpaket;++i)
+    {
+        byteArrayImage.clear();
+        streamImage << i;
+        streamImage.writeBytes((char*)(m_data+3000*i),3000);
+        m_UdpSocket->write(byteArrayImage);
+    }
+
+    qDebug() << "write image "<<m_imgCpt++;
 }
 
 void UDP_Worker::processTheDatagram(QNetworkDatagram datagram)
@@ -73,6 +89,7 @@ void UDP_Worker::processTheDatagram(QNetworkDatagram datagram)
     qDebug() << datagram.data();
     if( datagram.data() == QByteArray("INIT_CONNECTION"))
     {
+        qDebug() << "INIT_CONNECTION "<<datagram.senderAddress()<<":"<<datagram.senderPort();
         m_UdpSocket->connectToHost(datagram.senderAddress(), datagram.senderPort(),QIODevice::ReadWrite);
         emit connected();
     }

@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <Network.h>
+#include <QLabel>
 
 class MainWindow : public QMainWindow
 {
@@ -14,7 +14,12 @@ public:
 
 private:
 
-    Network* m_network;
+    QLabel m_labelImage;
+
+
+
+private slots:
+    void displayImg(QPixmap img);
 };
 
 #endif // MAINWINDOW_H

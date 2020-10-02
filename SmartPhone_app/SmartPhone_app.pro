@@ -29,11 +29,13 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        Network.cpp
+        UDP_Server/UDP_Server.cpp \
+        UDP_Server/UDP_Worker.cpp
 
 HEADERS += \
         mainwindow.h \
-        Network.h
+        UDP_Server/UDP_Server.h \
+        UDP_Server/UDP_Worker.h
 
 CONFIG += mobility
 MOBILITY = 

@@ -23,14 +23,9 @@ MainWindow::MainWindow(QWidget *parent)
     HBlayout_sendMsg->addWidget(LE_msg);
     HBlayout_sendMsg->addWidget(PB_sendMsh);
     flayout->addRow("Send message : ",HBlayout_sendMsg);
-    flayout->addRow("Image",&m_labelImage);
+
     connect(PB_sendMsh,&QPushButton::clicked,this, [=](){UDP_Server::instance().sendMessage(LE_msg->text());});
-    connect(&UDP_Server::instance(),&UDP_Server::newImage, this, &MainWindow::displayImg);
 
-
-    m_labelImage.setFixedSize(500,500);
-    m_labelImage.setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
-    setCentralWidget(centralWidget);
 
 
 }
@@ -40,8 +35,4 @@ MainWindow::~MainWindow()
 
 }
 
-void MainWindow::displayImg(QPixmap img)
-{
-    qDebug()<<__PRETTY_FUNCTION__;
-    m_labelImage.setPixmap(img.scaled(m_labelImage.size(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
-}
+

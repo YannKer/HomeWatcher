@@ -4,12 +4,12 @@
 #include <QTimer>
 #include <QObject>
 #include <QPixmap>
+#include <QImage>
 #include <QUdpSocket>
 #include <QNetworkDatagram>
-
 #include <memory>
 
-class Camera;
+class UDP_Worker;
 
 class UDP_Server : public QObject
 {
@@ -23,26 +23,31 @@ public:
     void sendMessage(QString msg);
 
 signals:
-    void connected();
-    void disconnected();
     void newImage(QPixmap);
 
+public slots:
+
 private:
-
-    QTimer* m_timer;
-
     QUdpSocket * m_UdpSocket;
-    Camera * m_Camera;
-    int m_FrameID;
+
+
+    char * m_dataPacket = nullptr;
+    char * m_dataImage = nullptr;
+    size_t m_dataImageSize = 0;
+    QPixmap m_pixmap;
+    QImage m_image;
+    uint16_t m_width = 0;
+    uint16_t m_height = 0;
+    int m_currentFrameID;
 
     //--------------------------------------------------------------------------
     static std::unique_ptr< UDP_Server > m_this;
     explicit UDP_Server();
+    void sendCurrentFrame();
 
 private slots:
     void readPendingDatagrams();
     void processTheDatagram(QNetworkDatagram datagram);
-    void onCameraNewImage();
 };
 
 #endif // UDP_SERVER_H
